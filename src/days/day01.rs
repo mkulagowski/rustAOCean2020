@@ -1,27 +1,27 @@
 use crate::common::Solution;
 
-fn calculate_fuel(mass: i32) -> i32 {
-    ((mass / 3) - 2).max(0)
-}
-
 fn part1(input: &Vec<i32>) -> String {
-    let mut fuel = 0;
-    for num in input {
-        fuel += calculate_fuel(*num);
+    for (idx1, val1) in input.iter().enumerate() {
+        for val2 in input.iter().skip(idx1 + 1) {
+            if val1 + val2 == 2020 {
+                return (val1 * val2).to_string();
+            }
+        }
     }
-    fuel.to_string()
+    String::from("ERR")
 }
 
 fn part2(input: &Vec<i32>) -> String {
-    let mut fuel = 0;
-    for &num in input {
-        let mut num = num;
-        while num > 0 {
-            num = calculate_fuel(num);
-            fuel += num;
+    for (idx1, val1) in input.iter().enumerate() {
+        for (idx2, val2) in input.iter().skip(idx1 + 1).enumerate() {
+            for val3 in input.iter().skip(idx2 + 1) {
+                if val1 + val2 + val3 == 2020 {
+                    return (val1 * val2 * val3).to_string();
+                }
+            }
         }
     }
-    fuel.to_string()
+    String::from("ERR")
 }
 
 pub fn solve(raw_input: &[String]) -> Solution {
