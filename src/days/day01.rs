@@ -1,27 +1,21 @@
 use crate::common::Solution;
+use itertools::Itertools;
 
-fn part1(input: &Vec<i32>) -> String {
-    for (idx1, val1) in input.iter().enumerate() {
-        for val2 in input.iter().skip(idx1 + 1) {
-            if val1 + val2 == 2020 {
-                return (val1 * val2).to_string();
-            }
+fn find_combination_of(input: &Vec<i32>, comb_size: usize) -> i32 {
+    for vals in input.iter().copied().combinations(comb_size) {
+        if vals.iter().sum::<i32>() == 2020 {
+            return vals.iter().product();
         }
     }
-    String::from("ERR")
+    0
+}
+
+fn part1(input: &Vec<i32>) -> String {
+    find_combination_of(input, 2).to_string()
 }
 
 fn part2(input: &Vec<i32>) -> String {
-    for (idx1, val1) in input.iter().enumerate() {
-        for (idx2, val2) in input.iter().skip(idx1 + 1).enumerate() {
-            for val3 in input.iter().skip(idx2 + 1) {
-                if val1 + val2 + val3 == 2020 {
-                    return (val1 * val2 * val3).to_string();
-                }
-            }
-        }
-    }
-    String::from("ERR")
+    find_combination_of(input, 3).to_string()
 }
 
 pub fn solve(raw_input: &[String]) -> Solution {
