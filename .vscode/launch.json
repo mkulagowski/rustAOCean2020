@@ -7,7 +7,7 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Launch",
+            "name": "Debug rustAOCean2020",
             "program": "${workspaceFolder}/target/debug/rustAOCean2020",
             "windows": {
                 "program": "${workspaceFolder}/target/debug/rustAOCean2020.exe"

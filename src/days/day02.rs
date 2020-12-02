@@ -1,7 +1,12 @@
 use crate::common::Solution;
+use lazy_static::lazy_static;
 use regex::Regex;
 use std::str::FromStr;
 use std::string::ParseError;
+
+lazy_static! {
+    static ref PARSE_PATTERN: Regex = Regex::new(r"(\d+)-(\d+) (\w): (\w+)").unwrap();
+}
 
 struct PasswordCheck {
     min: usize,
@@ -14,8 +19,7 @@ impl FromStr for PasswordCheck {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let pattern = Regex::new(r"(\d+)-(\d+) (\w): (\w+)").expect("Invalid regex");
-        let matches = pattern.captures(s).unwrap();
+        let matches = PARSE_PATTERN.captures(s).unwrap();
 
         let min = matches
             .get(1)
