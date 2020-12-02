@@ -12,6 +12,18 @@
 				"isDefault": true
 			},
 			"label": "Rust: cargo build - rustAOCean2020"
+		},
+		{
+			"type": "cargo",
+			"subcommand": "run",
+			"problemMatcher": [
+				"$rustc"
+			],
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"label": "Rust: cargo run - rustAOCean2020"
 		}
 	]
 }

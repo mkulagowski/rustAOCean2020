@@ -5,15 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(Windows) Launch",
-            "type": "cppvsdbg",
+            "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/target/debug/rustAOCean2020.exe",
+            "name": "Launch",
+            "program": "${workspaceFolder}/target/debug/rustAOCean2020",
+            "windows": {
+                "program": "${workspaceFolder}/target/debug/rustAOCean2020.exe"
+            },
             "args": [],
-            "stopAtEntry": false,
+            "stopOnEntry": false,
             "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false
+            "sourceLanguages": [
+                "rust"
+            ]
         }
     ]
 }
