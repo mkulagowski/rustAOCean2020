@@ -1,4 +1,4 @@
-use crate::common::Solution;
+use crate::{common::Solution, reparse};
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::str::FromStr;
@@ -19,20 +19,8 @@ impl FromStr for PasswordCheck {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let matches = PARSE_PATTERN.captures(s).unwrap();
-
-        let min = matches
-            .get(1)
-            .map_or(0, |m| m.as_str().parse::<usize>().unwrap());
-        let max = matches
-            .get(2)
-            .map_or(0, |m| m.as_str().parse::<usize>().unwrap());
-        let character: char = matches
-            .get(3)
-            .map_or(' ', |m| m.as_str().chars().next().unwrap());
-        let password: String = matches
-            .get(4)
-            .map_or("".to_string(), |m| m.as_str().to_string());
+        let (min, max, character, password) =
+            reparse!(s, PARSE_PATTERN, usize, usize, char, String).unwrap();
 
         Ok(PasswordCheck {
             min,
