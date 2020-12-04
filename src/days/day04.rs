@@ -1,7 +1,7 @@
 use crate::{common::Solution, reparse};
 use lazy_static::lazy_static;
 use regex::Regex;
-use std::{collections::HashMap, str::FromStr, string::ParseError};
+use std::{collections::HashMap, collections::HashSet, str::FromStr, string::ParseError};
 
 struct Passport {
     data: HashMap<String, String>,
@@ -25,7 +25,7 @@ impl FromStr for Passport {
 }
 
 lazy_static! {
-    static ref FIELDS: Vec<String> = vec![
+    static ref FIELDS: HashSet<String> = [
         "byr".to_string(),
         "iyr".to_string(),
         "eyr".to_string(),
@@ -33,7 +33,10 @@ lazy_static! {
         "hcl".to_string(),
         "ecl".to_string(),
         "pid".to_string(),
-    ];
+    ]
+    .iter()
+    .cloned()
+    .collect();
     static ref FOUR_DIG: Regex = Regex::new(r"^\d{4}$").unwrap();
     static ref NINE_DIG: Regex = Regex::new(r"^\d{9}$").unwrap();
     static ref HGT: Regex = Regex::new(r"^\d+(cm|in)$").unwrap();
@@ -91,7 +94,7 @@ impl Passport {
             .data
             .iter()
             .map(|(k, _)| k)
-            .filter(|k| FIELDS.contains(k))
+            .filter(|&k| FIELDS.contains(k))
             .count();
         proper_fields == FIELDS.len()
     }
