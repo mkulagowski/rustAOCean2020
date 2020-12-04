@@ -89,7 +89,7 @@ fn part1(input: &Map) -> String {
 fn part2(input: &Map) -> String {
     [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]
         .iter()
-        .map(|&(x, y)| check_slope2(input, x as usize, y as usize))
+        .map(|&(x, y)| check_slope2(input, x, y))
         .product::<usize>()
         .to_string()
 }
