@@ -61,11 +61,9 @@ impl RuleSet {
         let mut res: SimpleRuleSetData = HashMap::new();
         self.data.iter().for_each(|(key, vals)| {
             vals.into_iter().for_each(|(_, val)| {
-                if !res.contains_key(val) {
-                    res.insert(val.to_string(), vec![key.to_string()]);
-                } else {
-                    res.get_mut(val).unwrap().push(key.to_string());
-                }
+                res.entry(val.to_string())
+                    .or_default()
+                    .push(key.to_string())
             })
         });
 
