@@ -1,7 +1,9 @@
 use crate::common::Solution;
 use itertools::Itertools;
+use std::collections::HashSet;
 
-fn find_combination_of(input: &Vec<i32>, comb_size: usize) -> i32 {
+// P1: 600-800us, P2: 68ms
+fn _find_combination_of(input: &Vec<i32>, comb_size: usize) -> i32 {
     for vals in input.into_iter().copied().combinations(comb_size) {
         if vals.iter().sum::<i32>() == 2020 {
             return vals.iter().product();
@@ -10,19 +12,60 @@ fn find_combination_of(input: &Vec<i32>, comb_size: usize) -> i32 {
     0
 }
 
+// P1: 7-10us
+fn _find_combination_of1(input: &Vec<i32>, _: usize) -> i32 {
+    for (idx, val) in input.iter().enumerate() {
+        for val2 in input.iter().skip(idx + 1) {
+            if val + val2 == 2020 {
+                return val * val2;
+            }
+        }
+    }
+    0
+}
+
+// P1: 6-8us
+fn find_combination_of2<'a, I>(input_iter: I, target: i32) -> Option<i32>
+where
+    I: Iterator<Item = &'a i32>,
+{
+    let mut complements: HashSet<i32> = HashSet::new();
+    for val in input_iter {
+        let complement = target - val;
+        if complements.contains(&complement) {
+            return Some(complement * val);
+        }
+        complements.insert(*val);
+    }
+    None
+}
+
+// P2: 600-700us
+fn find_combination_of3(input: &Vec<i32>, target: i32) -> i32 {
+    for (idx, val) in input.iter().enumerate() {
+        if let Some(prod) = find_combination_of2(input.iter().skip(idx + 1), target - val) {
+            return prod * val;
+        }
+    }
+
+    0
+}
+
 fn part1(input: &Vec<i32>) -> String {
-    find_combination_of(input, 2).to_string()
+    find_combination_of2(input.iter(), 2020)
+        .unwrap()
+        .to_string()
 }
 
 fn part2(input: &Vec<i32>) -> String {
-    find_combination_of(input, 3).to_string()
+    find_combination_of3(input, 2020).to_string()
 }
 
 fn parse_input(raw_input: &[String]) -> Vec<i32> {
     raw_input
-    .iter()
-    .map(|x| x.parse().expect(&format!("Could not parse value {}", x)))
-    .collect()
+        .iter()
+        .map(|x| x.parse().expect(&format!("Could not parse value {}", x)))
+        .collect()
 }
 
 pub fn solve(raw_input: &[String]) -> Solution {

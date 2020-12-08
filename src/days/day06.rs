@@ -1,14 +1,17 @@
 use crate::common::Solution;
 use std::collections::HashSet;
 
-fn count_chars(txt: &String) -> usize {
-    let mut counter = txt.chars().collect::<HashSet<_>>();
-    counter.remove(&' ');
-    counter.len()
+// P1: 1000-1100us
+fn _count_chars2(txt: &Vec<String>) -> usize {
+    txt.iter()
+        .flat_map(String::as_bytes)
+        .collect::<HashSet<_>>()
+        .len()
 }
 
-fn count_dup_chars(txt: &String) -> usize {
-    txt.split_whitespace()
+// P2: 2600-3000us
+fn _count_dup_chars2(txt: &Vec<String>) -> usize {
+    txt.iter()
         .map(|s| s.chars().collect::<HashSet<_>>())
         .fold(None, |acc, hs| {
             acc.map(|a: HashSet<_>| a.intersection(&hs).map(|s| *s).collect())
@@ -18,28 +21,38 @@ fn count_dup_chars(txt: &String) -> usize {
         .len()
 }
 
-fn part1(input: &Vec<String>) -> String {
+// P1,P2: 70-150us
+fn count_chars(txt: &Vec<String>, limit: usize) -> usize {
+    let mut char_counter = [0; 26];
+    txt.iter()
+        .flat_map(String::as_bytes)
+        .for_each(|x| char_counter[(x - b'a') as usize] += 1);
+
+    char_counter.iter().filter(|&&x| x >= limit).count()
+}
+
+fn part1(input: &Vec<Vec<String>>) -> String {
     input
         .iter()
-        .map(|s| count_chars(s))
+        .map(|s| count_chars(s, 1))
         .sum::<usize>()
         .to_string()
 }
 
-fn part2(input: &Vec<String>) -> String {
+fn part2(input: &Vec<Vec<String>>) -> String {
     input
         .iter()
-        .map(|s| count_dup_chars(s))
+        .map(|s| count_chars(s, s.len()))
         .sum::<usize>()
         .to_string()
 }
 
 // INPUT NEEDS TO BE PREFORMATTED -> 1 GROUP PER LINE, PEOPLE SEPARATED BY SPACES!
-fn parse_input(raw_input: &[String]) -> Vec<String> {
+fn parse_input(raw_input: &[String]) -> Vec<Vec<String>> {
     raw_input
-    .iter()
-    .map(|x| x.parse().expect(&format!("Could not parse value {}", x)))
-    .collect()
+        .iter()
+        .map(|x| x.split_whitespace().map(|s| s.to_string()).collect())
+        .collect()
 }
 
 pub fn solve(raw_input: &[String]) -> Solution {

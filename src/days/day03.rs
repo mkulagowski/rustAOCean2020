@@ -49,6 +49,20 @@ impl Map {
     }
 }
 
+// P1: 5-10us, P2: 18-20us
+fn _check_slope2(data: &Map, xslope: usize, yslope: usize) -> usize {
+    let x_limit = data.xs;
+    let y_limit = data.ys;
+    let slope_generator =
+        itertools::iterate((0, 0), move |(x, y)| ((x + xslope) % x_limit, y + yslope));
+
+    slope_generator
+        .take_while(|&(_, y)| y < y_limit)
+        .filter(|&(x, y)| data.get(x, y))
+        .count()
+}
+
+// P1: 1.5-3us, P2: 7-15us
 fn check_slope(data: &Map, xslope: usize, yslope: usize) -> usize {
     let mut tree_counter = 0;
     let mut ix = 0;
@@ -70,18 +84,6 @@ fn check_slope(data: &Map, xslope: usize, yslope: usize) -> usize {
     tree_counter
 }
 
-fn check_slope2(data: &Map, xslope: usize, yslope: usize) -> usize {
-    let x_limit = data.xs;
-    let y_limit = data.ys;
-    let slope_generator =
-        itertools::iterate((0, 0), move |(x, y)| ((x + xslope) % x_limit, y + yslope));
-
-    slope_generator
-        .take_while(|&(_, y)| y < y_limit)
-        .filter(|&(x, y)| data.get(x, y))
-        .count()
-}
-
 fn part1(input: &Map) -> String {
     check_slope(input, 3, 1).to_string()
 }
@@ -89,7 +91,7 @@ fn part1(input: &Map) -> String {
 fn part2(input: &Map) -> String {
     [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]
         .iter()
-        .map(|&(x, y)| check_slope2(input, x, y))
+        .map(|&(x, y)| check_slope(input, x, y))
         .product::<usize>()
         .to_string()
 }

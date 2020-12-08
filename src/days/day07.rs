@@ -104,11 +104,10 @@ impl RuleSet {
     }
 }
 
-fn part1(input: &RuleSet) -> String {
+fn part1(input: &SimpleRuleSetData) -> String {
     let mut counter = 0usize;
     let mut visited: HashSet<String> = HashSet::new();
     let mut key_queue: Queue<String> = queue![SEARCHED_BAG.to_string()];
-    let input = input.invert_ruleset();
 
     while key_queue.size() > 0 {
         let key = key_queue.remove().ok().unwrap();
@@ -138,11 +137,11 @@ fn parse_input(raw_input: &[String]) -> RuleSet {
 
 pub fn solve(raw_input: &[String]) -> Solution {
     let input = parse_input(raw_input);
-
+    let inverted_input = input.invert_ruleset();
+    
     use std::time::Instant;
     let now = Instant::now();
-    let solution = (part1(&input), part2(&input));
+    let solution = (part1(&inverted_input), part2(&input));
     let elapsed = now.elapsed();
     (solution, elapsed)
 }
-
