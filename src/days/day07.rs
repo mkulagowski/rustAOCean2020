@@ -130,9 +130,19 @@ fn part2(input: &RuleSet) -> String {
     input.count_rules(&SEARCHED_BAG.to_string()).to_string()
 }
 
-pub fn solve(raw_input: &[String]) -> Solution {
+fn parse_input(raw_input: &[String]) -> RuleSet {
     let mut ruleset = RuleSet::new();
     raw_input.iter().for_each(|x| ruleset.add_rule(x));
-
-    (part1(&ruleset), part2(&ruleset))
+    ruleset
 }
+
+pub fn solve(raw_input: &[String]) -> Solution {
+    let input = parse_input(raw_input);
+
+    use std::time::Instant;
+    let now = Instant::now();
+    let solution = (part1(&input), part2(&input));
+    let elapsed = now.elapsed();
+    (solution, elapsed)
+}
+

@@ -59,11 +59,19 @@ fn part2(input: &Vec<PasswordCheck>) -> String {
         .to_string()
 }
 
-pub fn solve(raw_input: &[String]) -> Solution {
-    let input: Vec<PasswordCheck> = raw_input
-        .iter()
-        .map(|x| x.parse().expect(&format!("Could not parse value {}", x)))
-        .collect();
+fn parse_input(raw_input: &[String]) -> Vec<PasswordCheck> {
+    raw_input
+    .iter()
+    .map(|x| x.parse().expect(&format!("Could not parse value {}", x)))
+    .collect()
+}
 
-    (part1(&input), part2(&input))
+pub fn solve(raw_input: &[String]) -> Solution {
+    let input = parse_input(raw_input);
+
+    use std::time::Instant;
+    let now = Instant::now();
+    let solution = (part1(&input), part2(&input));
+    let elapsed = now.elapsed();
+    (solution, elapsed)
 }

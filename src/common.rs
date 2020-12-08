@@ -1,8 +1,9 @@
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
+use std::time::Duration;
 
-pub type Solution = (String, String);
+pub type Solution = ((String, String), Duration);
 
 pub fn day_input_filename(day: u8) -> PathBuf {
     let padded_day = format!("{:02}", day);

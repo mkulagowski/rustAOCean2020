@@ -113,11 +113,19 @@ fn part2(input: &Vec<Passport>) -> String {
 }
 
 // INPUT NEEDS TO BE PREFORMATTED -> 1 PASSPORT PER LINE!
-pub fn solve(raw_input: &[String]) -> Solution {
-    let input: Vec<Passport> = raw_input
-        .iter()
-        .map(|x| x.parse().expect(&format!("Could not parse value {}", x)))
-        .collect();
+fn parse_input(raw_input: &[String]) -> Vec<Passport> {
+    raw_input
+    .iter()
+    .map(|x| x.parse().expect(&format!("Could not parse value {}", x)))
+    .collect()
+}
 
-    (part1(&input), part2(&input))
+pub fn solve(raw_input: &[String]) -> Solution {
+    let input = parse_input(raw_input);
+
+    use std::time::Instant;
+    let now = Instant::now();
+    let solution = (part1(&input), part2(&input));
+    let elapsed = now.elapsed();
+    (solution, elapsed)
 }

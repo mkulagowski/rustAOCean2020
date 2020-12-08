@@ -128,8 +128,16 @@ fn part2(input: &Vec<Instruction>) -> String {
     res.1.to_string()
 }
 
-pub fn solve(raw_input: &[String]) -> Solution {
-    let instruction_set = raw_input.iter().map(|x| x.parse().unwrap()).collect();
+fn parse_input(raw_input: &[String]) -> Vec<Instruction> {
+    raw_input.iter().map(|x| x.parse().unwrap()).collect()
+}
 
-    (part1(&instruction_set), part2(&instruction_set))
+pub fn solve(raw_input: &[String]) -> Solution {
+    let input = parse_input(raw_input);
+
+    use std::time::Instant;
+    let now = Instant::now();
+    let solution = (part1(&input), part2(&input));
+    let elapsed = now.elapsed();
+    (solution, elapsed)
 }

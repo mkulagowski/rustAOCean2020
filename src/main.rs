@@ -1,5 +1,3 @@
-use std::time::Instant;
-
 mod common;
 mod days;
 
@@ -10,12 +8,11 @@ fn main() {
                 "Problem occured while getting input for day{:02}",
                 day
             ));
-            let now = Instant::now();
-            let solution = solver(&input);
-            let elapsed = now.elapsed();
+            
+            let (solution, time) = solver(&input);
             println!(
                 "Solution for day{:02}: ({}, {}), took {:?}",
-                day, solution.0, solution.1, elapsed
+                day, solution.0, solution.1, time
             );
         }
     }

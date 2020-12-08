@@ -94,11 +94,20 @@ fn part2(input: &Map) -> String {
         .to_string()
 }
 
-pub fn solve(raw_input: &[String]) -> Solution {
+fn parse_input(raw_input: &[String]) -> Map {
     let input: Vec<String> = raw_input.iter().map(|x| x.to_string()).collect();
 
     let mut data_map = Map::new(input[0].len(), input.len());
     data_map.build(&input);
+    data_map
+}
 
-    (part1(&data_map), part2(&data_map))
+pub fn solve(raw_input: &[String]) -> Solution {
+    let input = parse_input(raw_input);
+
+    use std::time::Instant;
+    let now = Instant::now();
+    let solution = (part1(&input), part2(&input));
+    let elapsed = now.elapsed();
+    (solution, elapsed)
 }
