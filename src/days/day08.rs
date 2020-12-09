@@ -77,13 +77,13 @@ impl CodeRunner {
         (self.finished, self.accumulator)
     }
 
-    fn set(&mut self, idx: usize, val: Instruction) {
+    fn _set(&mut self, idx: usize, val: Instruction) {
         if let Some(elem) = self.data.get_mut(idx) {
             *elem = val;
         }
     }
 
-    fn reset(&mut self) {
+    fn _reset(&mut self) {
         self.finished = false;
         self.curr_idx = 0;
         self.accumulator = 0;
@@ -91,41 +91,92 @@ impl CodeRunner {
     }
 }
 
+// my auto formatter kept splitting args here, so I shortened the types
+type VecInstr = Vec<Instruction>;
+type HSU = HashSet<usize>;
+// P2: 45us
+fn dfs(acc: usize, change: bool, idx: usize, data: &VecInstr, visited: &mut HSU) -> Option<usize> {
+    let mut acc = acc;
+    let mut idx = idx;
+    while let Some(Instruction::Acc(val)) = data.get(idx) {
+        if visited.insert(idx) {
+            acc = (acc as i32 + val) as usize;
+            idx += 1;
+        } else {
+            return None;
+        }
+    }
+
+    if visited.insert(idx) {
+        match data.get(idx) {
+            Some(Instruction::Jmp(offset)) => {
+                let offset_idx = (idx as i32 + offset) as usize;
+                if let Some(x) = dfs(acc, change, offset_idx, data, visited) {
+                    return Some(x);
+                }
+                if change {
+                    return dfs(acc, false, idx + 1, data, visited);
+                }
+            }
+            Some(Instruction::Nop(offset)) => {
+                if let Some(x) = dfs(acc, change, idx + 1, data, visited) {
+                    return Some(x);
+                }
+                if change {
+                    let offset_idx = (idx as i32 + offset) as usize;
+                    return dfs(acc, false, offset_idx, data, visited);
+                }
+            }
+            None => return Some(acc),
+            _ => {}
+        }
+    }
+    None
+}
+
+// P2: 550-600us
+fn _naive(input: &Vec<Instruction>) -> String {
+    let mut runner = CodeRunner::new(input.to_vec());
+    let mut res = runner.run();
+    'outer: while !res.0 {
+        for (i, inst) in input.iter().enumerate() {
+            if let Instruction::Jmp(offset) = inst {
+                runner._reset();
+                runner._set(i, Instruction::Nop(*offset));
+                res = runner.run();
+                if res.0 {
+                    break 'outer;
+                }
+                runner._set(i, Instruction::Jmp(*offset));
+            }
+        }
+
+        for (i, inst) in input.iter().enumerate() {
+            if let Instruction::Nop(offset) = inst {
+                runner._reset();
+                runner._set(i, Instruction::Jmp(*offset));
+                res = runner.run();
+                if res.0 {
+                    break 'outer;
+                }
+                runner._set(i, Instruction::Nop(*offset));
+            }
+        }
+    }
+
+    res.1.to_string()
+}
+
+// 12-20us
 fn part1(input: &Vec<Instruction>) -> String {
     let mut runner = CodeRunner::new(input.to_vec());
     runner.run().1.to_string()
 }
 
 fn part2(input: &Vec<Instruction>) -> String {
-    let mut runner = CodeRunner::new(input.to_vec());
-    let mut res = runner.run();
-    'outer: while !res.0 {
-        for (i, inst) in input.iter().enumerate() {
-            if let Instruction::Jmp(offset) = inst {
-                runner.reset();
-                runner.set(i, Instruction::Nop(*offset));
-                res = runner.run();
-                if res.0 {
-                    break 'outer;
-                }
-                runner.set(i, Instruction::Jmp(*offset));
-            }
-        }
-
-        for (i, inst) in input.iter().enumerate() {
-            if let Instruction::Nop(offset) = inst {
-                runner.reset();
-                runner.set(i, Instruction::Jmp(*offset));
-                res = runner.run();
-                if res.0 {
-                    break 'outer;
-                }
-                runner.set(i, Instruction::Nop(*offset));
-            }
-        }
-    }
-
-    res.1.to_string()
+    let mut visited: HashSet<usize> = HashSet::new();
+    let res = dfs(0, true, 0, input, &mut visited);
+    res.unwrap().to_string()
 }
 
 fn parse_input(raw_input: &[String]) -> Vec<Instruction> {
