@@ -8,7 +8,7 @@ fn main() {
                 "Problem occured while getting input for day{:02}",
                 day
             ));
-            
+
             let (solution, time) = solver(&input);
             println!(
                 "Solution for day{:02}: ({}, {}), took {:?}",
