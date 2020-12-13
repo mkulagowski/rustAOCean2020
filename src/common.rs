@@ -30,6 +30,7 @@ macro_rules! reparse_one {
             Some(item) => {
                 let ret = item.unwrap().as_str().parse::<$($arg1)::*>();
                 if ret.is_err() {
+                    println!("err in parsing {:?}", item);
                     $err = concat!("parse::", stringify!($($arg1)::*));
                 }
                 ret.unwrap_or(err)
