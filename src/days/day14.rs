@@ -11,10 +11,8 @@ lazy_static! {
 fn part1(input: &Vec<BitmaskProg>) -> String {
     let mut mem: HashMap<usize, u64> = HashMap::new();
     for prog in input {
-        //println!("mask: {:?}\nvals={:?}\n", prog.masked_bits, prog.mem_inputs);
         prog.mem_inputs.iter().for_each(|&(i, x)| {
             let changed = prog.apply_mask(x);
-            //println!("old={}, new={}, idx={}", x, changed, i);
             mem.insert(i, changed);
         });
     }
@@ -25,9 +23,7 @@ fn part1(input: &Vec<BitmaskProg>) -> String {
 fn part2(input: &Vec<BitmaskProg>) -> String {
     let mut mem: HashMap<usize, u64> = HashMap::new();
     for prog in input {
-        //println!("mask: {:?}\nvals={:?}\n", prog.masked_bits, prog.mem_inputs);
         prog.mem_inputs.iter().for_each(|&(i, x)| {
-            //println!("mem[{}] = {}", i as u64, x);
             prog.generate_floatings(prog.apply_ones(i as u64))
                 .iter()
                 .for_each(|&ii| {
@@ -51,11 +47,9 @@ impl BitmaskProg {
     fn apply_mask(&self, val: u64) -> u64 {
         let mut toggle_mask = 0u64;
         for (i, x) in &self.masked_bits {
-            //println!("check if bit{} of {:#b} is eq {}", *i, val, *x);
             if *x != BitmaskProg::check_bit(val, *i) {
                 toggle_mask |= 0x1 << *i;
             }
-            //println!("toggle mask: {:#b}", toggle_mask);
         }
 
         val ^ toggle_mask
@@ -69,12 +63,10 @@ impl BitmaskProg {
         let mut res = vec![val];
         for ff in &self.floating_bits {
             let mut new_v: Vec<u64> = Vec::with_capacity(res.len() * self.floating_bits.len());
-            //println!("res= {:?}", res);
             for rr in res {
                 new_v.push(rr);
                 new_v.push(rr ^ (0x1 << *ff));
             }
-            //println!("res= {:?}", res);
             res = new_v;
         }
         res
@@ -82,7 +74,6 @@ impl BitmaskProg {
 
     fn check_bit(x: u64, i: usize) -> u8 {
         let res = ((x >> i) & 0x1) as u8;
-        //println!("check_bit({}, {}) = {}", x, i, res);
         res
     }
 }
