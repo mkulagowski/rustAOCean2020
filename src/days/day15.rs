@@ -29,7 +29,7 @@ fn part1(input: &Vec<u32>) -> String {
 }
 
 fn part2(input: &Vec<u32>) -> String {
-    find_nth_van_eck(input, 30000000).to_string()
+    find_nth_van_eck(input, 30_000_000).to_string()
 }
 
 fn parse_input(raw_input: &[String]) -> Vec<u32> {
