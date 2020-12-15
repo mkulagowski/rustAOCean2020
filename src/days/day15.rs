@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::common::Solution;
 
-fn find_nth_van_Eck(input: &Vec<u32>, limit: usize) -> u32 {
+fn find_nth_van_eck(input: &Vec<u32>, limit: usize) -> u32 {
     let mut num_to_age: HashMap<u32, usize> = HashMap::new();
     let mut counter = input.len();
     for (i, &x) in input.iter().take(counter - 1).enumerate() {
@@ -25,11 +25,11 @@ fn find_nth_van_Eck(input: &Vec<u32>, limit: usize) -> u32 {
 }
 
 fn part1(input: &Vec<u32>) -> String {
-    find_nth_van_Eck(input, 2020).to_string()
+    find_nth_van_eck(input, 2020).to_string()
 }
 
 fn part2(input: &Vec<u32>) -> String {
-    find_nth_van_Eck(input, 30000000).to_string()
+    find_nth_van_eck(input, 30000000).to_string()
 }
 
 fn parse_input(raw_input: &[String]) -> Vec<u32> {
