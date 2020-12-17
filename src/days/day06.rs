@@ -31,7 +31,7 @@ fn count_chars(txt: &Vec<String>, limit: usize) -> usize {
     char_counter.iter().filter(|&&x| x >= limit).count()
 }
 
-fn part1(input: &Vec<Vec<String>>) -> String {
+fn part1(input: &InputType) -> String {
     input
         .iter()
         .map(|s| count_chars(s, 1))
@@ -39,7 +39,7 @@ fn part1(input: &Vec<Vec<String>>) -> String {
         .to_string()
 }
 
-fn part2(input: &Vec<Vec<String>>) -> String {
+fn part2(input: &InputType) -> String {
     input
         .iter()
         .map(|s| count_chars(s, s.len()))
@@ -48,7 +48,8 @@ fn part2(input: &Vec<Vec<String>>) -> String {
 }
 
 // INPUT NEEDS TO BE PREFORMATTED -> 1 GROUP PER LINE, PEOPLE SEPARATED BY SPACES!
-fn parse_input(raw_input: &[String]) -> Vec<Vec<String>> {
+type InputType = Vec<Vec<String>>;
+fn parse_input(raw_input: &[String]) -> InputType {
     raw_input
         .iter()
         .map(|x| x.split_whitespace().map(|s| s.to_string()).collect())

@@ -1,6 +1,5 @@
-use std::collections::HashMap;
-
 use crate::common::Solution;
+use std::collections::HashMap;
 
 fn find_nth_van_eck(input: &Vec<u32>, limit: usize) -> u32 {
     //for some reason, creating ::with_capacity() even with correct capacity makes this solution 2x slower...no idea why .__.
@@ -25,15 +24,16 @@ fn find_nth_van_eck(input: &Vec<u32>, limit: usize) -> u32 {
     last_num
 }
 
-fn part1(input: &Vec<u32>) -> String {
+fn part1(input: &InputType) -> String {
     find_nth_van_eck(input, 2020).to_string()
 }
 
-fn part2(input: &Vec<u32>) -> String {
+fn part2(input: &InputType) -> String {
     find_nth_van_eck(input, 30_000_000).to_string()
 }
 
-fn parse_input(raw_input: &[String]) -> Vec<u32> {
+type InputType = Vec<u32>;
+fn parse_input(raw_input: &[String]) -> InputType {
     raw_input
         .iter()
         .flat_map(|x| x.split(","))

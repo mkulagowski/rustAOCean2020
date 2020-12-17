@@ -47,11 +47,11 @@ impl PasswordCheck {
     }
 }
 
-fn part1(input: &Vec<PasswordCheck>) -> String {
+fn part1(input: &InputType) -> String {
     input.iter().filter(|&x| x.check()).count().to_string()
 }
 
-fn part2(input: &Vec<PasswordCheck>) -> String {
+fn part2(input: &InputType) -> String {
     input
         .iter()
         .filter(|&x| x.check_slice())
@@ -59,11 +59,12 @@ fn part2(input: &Vec<PasswordCheck>) -> String {
         .to_string()
 }
 
-fn parse_input(raw_input: &[String]) -> Vec<PasswordCheck> {
+type InputType = Vec<PasswordCheck>;
+fn parse_input(raw_input: &[String]) -> InputType {
     raw_input
-    .iter()
-    .map(|x| x.parse().expect(&format!("Could not parse value {}", x)))
-    .collect()
+        .iter()
+        .map(|x| x.parse().expect(&format!("Could not parse value {}", x)))
+        .collect()
 }
 
 pub fn solve(raw_input: &[String]) -> Solution {

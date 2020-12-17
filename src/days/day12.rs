@@ -133,7 +133,7 @@ impl FromStr for Move {
     }
 }
 
-fn part1(input: &Vec<Move>) -> String {
+fn part1(input: &InputType) -> String {
     let mut ship_pos = Coords::new(0, 0);
     let mut ship_dir = Direction::E;
 
@@ -151,7 +151,7 @@ fn part1(input: &Vec<Move>) -> String {
     ship_pos.manhattan().to_string()
 }
 
-fn part2(input: &Vec<Move>) -> String {
+fn part2(input: &InputType) -> String {
     let mut ship_pos = Coords::new(0, 0);
     let mut ship_dir = Coords::new(10, 1);
 
@@ -169,7 +169,8 @@ fn part2(input: &Vec<Move>) -> String {
     ship_pos.manhattan().to_string()
 }
 
-fn parse_input(raw_input: &[String]) -> Vec<Move> {
+type InputType = Vec<Move>;
+fn parse_input(raw_input: &[String]) -> InputType {
     raw_input.iter().map(|x| x.parse().unwrap()).collect()
 }
 

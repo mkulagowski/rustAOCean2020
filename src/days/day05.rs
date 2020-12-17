@@ -81,15 +81,16 @@ fn find_seat(input: &Vec<Ticket>) -> u32 {
         .0 as u32
 }
 
-fn part1(input: &Vec<Ticket>) -> String {
+fn part1(input: &InputType) -> String {
     input.iter().map(count_seat_id).max().unwrap().to_string()
 }
 
-fn part2(input: &Vec<Ticket>) -> String {
+fn part2(input: &InputType) -> String {
     find_seat(input).to_string()
 }
 
-fn parse_input(raw_input: &[String]) -> Vec<Ticket> {
+type InputType = Vec<Ticket>;
+fn parse_input(raw_input: &[String]) -> InputType {
     raw_input
         .iter()
         .map(|x| {

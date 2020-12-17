@@ -51,17 +51,18 @@ fn find_combination_of3(input: &Vec<i32>, target: i32) -> i32 {
     0
 }
 
-fn part1(input: &Vec<i32>) -> String {
+fn part1(input: &InputType) -> String {
     find_combination_of2(input.iter(), 2020)
         .unwrap()
         .to_string()
 }
 
-fn part2(input: &Vec<i32>) -> String {
+fn part2(input: &InputType) -> String {
     find_combination_of3(input, 2020).to_string()
 }
 
-fn parse_input(raw_input: &[String]) -> Vec<i32> {
+type InputType = Vec<i32>;
+fn parse_input(raw_input: &[String]) -> InputType {
     raw_input
         .iter()
         .map(|x| x.parse().expect(&format!("Could not parse value {}", x)))

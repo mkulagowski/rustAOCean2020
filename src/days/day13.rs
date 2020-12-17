@@ -27,7 +27,7 @@ fn chinese_remainder(input: &Vec<(i64, i64)>) -> i64 {
         % n_prod
 }
 
-fn part1(input: &TimeTable) -> String {
+fn part1(input: &InputType) -> String {
     let (bus_id, wait_time) = input
         .bus_ids
         .iter()
@@ -38,11 +38,12 @@ fn part1(input: &TimeTable) -> String {
     (bus_id * wait_time).to_string()
 }
 
-fn part2(input: &TimeTable) -> String {
+fn part2(input: &InputType) -> String {
     chinese_remainder(&input.bus_ids).to_string()
 }
 
-fn parse_input(raw_input: &[String]) -> TimeTable {
+type InputType = TimeTable;
+fn parse_input(raw_input: &[String]) -> InputType {
     let mut input_iter = raw_input.iter();
     let time = input_iter.next().unwrap().parse().unwrap();
     let bus_ids = input_iter

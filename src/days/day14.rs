@@ -8,33 +8,6 @@ lazy_static! {
     static ref MEM_REGX: Regex = Regex::new(r"mem\[(\d+)\] = (\d+)").unwrap();
 }
 
-fn part1(input: &Vec<BitmaskProg>) -> String {
-    let mut mem: HashMap<usize, u64> = HashMap::new();
-    for prog in input {
-        prog.mem_inputs.iter().for_each(|&(i, x)| {
-            let changed = prog.apply_mask(x);
-            mem.insert(i, changed);
-        });
-    }
-
-    mem.values().sum::<u64>().to_string()
-}
-
-fn part2(input: &Vec<BitmaskProg>) -> String {
-    let mut mem: HashMap<usize, u64> = HashMap::new();
-    for prog in input {
-        prog.mem_inputs.iter().for_each(|&(i, x)| {
-            prog.generate_floatings(prog.apply_ones(i as u64))
-                .iter()
-                .for_each(|&ii| {
-                    mem.insert(ii as usize, x);
-                });
-        });
-    }
-
-    mem.values().sum::<u64>().to_string()
-}
-
 struct BitmaskProg {
     masked_bits: Vec<(usize, u8)>,
     mem_inputs: Vec<(usize, u64)>,
@@ -78,7 +51,35 @@ impl BitmaskProg {
     }
 }
 
-fn parse_input(raw_input: &[String]) -> Vec<BitmaskProg> {
+fn part1(input: &InputType) -> String {
+    let mut mem: HashMap<usize, u64> = HashMap::new();
+    for prog in input {
+        prog.mem_inputs.iter().for_each(|&(i, x)| {
+            let changed = prog.apply_mask(x);
+            mem.insert(i, changed);
+        });
+    }
+
+    mem.values().sum::<u64>().to_string()
+}
+
+fn part2(input: &InputType) -> String {
+    let mut mem: HashMap<usize, u64> = HashMap::new();
+    for prog in input {
+        prog.mem_inputs.iter().for_each(|&(i, x)| {
+            prog.generate_floatings(prog.apply_ones(i as u64))
+                .iter()
+                .for_each(|&ii| {
+                    mem.insert(ii as usize, x);
+                });
+        });
+    }
+
+    mem.values().sum::<u64>().to_string()
+}
+
+type InputType = Vec<BitmaskProg>;
+fn parse_input(raw_input: &[String]) -> InputType {
     let mut programes: Vec<BitmaskProg> = Vec::new();
     let mut masked_bits: Vec<(usize, u8)> = Vec::new();
     let mut mem_inputs: Vec<(usize, u64)> = Vec::new();

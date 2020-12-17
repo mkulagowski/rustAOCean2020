@@ -125,11 +125,12 @@ fn part1(input: &SimpleRuleSetData) -> String {
     counter.to_string()
 }
 
-fn part2(input: &RuleSet) -> String {
+fn part2(input: &InputType) -> String {
     input.count_rules(&SEARCHED_BAG.to_string()).to_string()
 }
 
-fn parse_input(raw_input: &[String]) -> RuleSet {
+type InputType = RuleSet;
+fn parse_input(raw_input: &[String]) -> InputType {
     let mut ruleset = RuleSet::new();
     raw_input.iter().for_each(|x| ruleset.add_rule(x));
     ruleset
@@ -138,7 +139,7 @@ fn parse_input(raw_input: &[String]) -> RuleSet {
 pub fn solve(raw_input: &[String]) -> Solution {
     let input = parse_input(raw_input);
     let inverted_input = input.invert_ruleset();
-    
+
     use std::time::Instant;
     let now = Instant::now();
     let solution = (part1(&inverted_input), part2(&input));

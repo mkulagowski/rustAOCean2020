@@ -1,14 +1,15 @@
 use crate::common::Solution;
 
-fn part1(input: &Vec<String>) -> String {
+fn part1(input: &InputType) -> String {
     "".to_string()
 }
 
-fn part2(input: &Vec<String>) -> String {
+fn part2(input: &InputType) -> String {
     "".to_string()
 }
 
-fn parse_input(raw_input: &[String]) -> Vec<String> {
+type InputType = Vec<String>;
+fn parse_input(raw_input: &[String]) -> InputType {
     raw_input.iter().map(|x| x.parse().unwrap()).collect()
 }
 

@@ -168,18 +168,19 @@ fn _naive(input: &Vec<Instruction>) -> String {
 }
 
 // 12-20us
-fn part1(input: &Vec<Instruction>) -> String {
+fn part1(input: &InputType) -> String {
     let mut runner = CodeRunner::new(input.to_vec());
     runner.run().1.to_string()
 }
 
-fn part2(input: &Vec<Instruction>) -> String {
+fn part2(input: &InputType) -> String {
     let mut visited: HashSet<usize> = HashSet::new();
     let res = dfs(0, true, 0, input, &mut visited);
     res.unwrap().to_string()
 }
 
-fn parse_input(raw_input: &[String]) -> Vec<Instruction> {
+type InputType = Vec<Instruction>;
+fn parse_input(raw_input: &[String]) -> InputType {
     raw_input.iter().map(|x| x.parse().unwrap()).collect()
 }
 

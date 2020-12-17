@@ -100,11 +100,11 @@ impl Passport {
     }
 }
 
-fn part1(input: &Vec<Passport>) -> String {
+fn part1(input: &InputType) -> String {
     input.iter().filter(|&x| x.is_valid()).count().to_string()
 }
 
-fn part2(input: &Vec<Passport>) -> String {
+fn part2(input: &InputType) -> String {
     input
         .iter()
         .filter(|&x| x.validate_fields())
@@ -113,11 +113,12 @@ fn part2(input: &Vec<Passport>) -> String {
 }
 
 // INPUT NEEDS TO BE PREFORMATTED -> 1 PASSPORT PER LINE!
-fn parse_input(raw_input: &[String]) -> Vec<Passport> {
+type InputType = Vec<Passport>;
+fn parse_input(raw_input: &[String]) -> InputType {
     raw_input
-    .iter()
-    .map(|x| x.parse().expect(&format!("Could not parse value {}", x)))
-    .collect()
+        .iter()
+        .map(|x| x.parse().expect(&format!("Could not parse value {}", x)))
+        .collect()
 }
 
 pub fn solve(raw_input: &[String]) -> Solution {

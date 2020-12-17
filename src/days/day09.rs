@@ -21,7 +21,7 @@ where
     None
 }
 
-fn part1(input: &Vec<usize>) -> String {
+fn part1(input: &InputType) -> String {
     let mut preamble = input.iter().copied().take(PRE_SIZE).collect::<HashSet<_>>();
 
     input
@@ -41,7 +41,7 @@ fn part1(input: &Vec<usize>) -> String {
         .to_string()
 }
 
-fn part2(input: &Vec<usize>) -> String {
+fn part2(input: &InputType) -> String {
     let mut acc: usize = 0;
     let mut start_idx = 0;
     for (i, x) in input.iter().enumerate() {
@@ -64,7 +64,8 @@ fn part2(input: &Vec<usize>) -> String {
     "".to_string()
 }
 
-fn parse_input(raw_input: &[String]) -> Vec<usize> {
+type InputType = Vec<usize>;
+fn parse_input(raw_input: &[String]) -> InputType {
     raw_input.iter().map(|x| x.parse().unwrap()).collect()
 }
 

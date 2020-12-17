@@ -193,7 +193,7 @@ impl Map {
     }
 }
 
-fn part1(input: &Map) -> String {
+fn part1(input: &InputType) -> String {
     let mut board = input.clone();
     board.occupied_limit = 4;
     board.calc_neighs(false);
@@ -201,7 +201,7 @@ fn part1(input: &Map) -> String {
     board.find_equilibrium().to_string()
 }
 
-fn part2(input: &Map) -> String {
+fn part2(input: &InputType) -> String {
     let mut board = input.clone();
     board.occupied_limit = 5;
     board.calc_neighs(true);
@@ -209,7 +209,8 @@ fn part2(input: &Map) -> String {
     board.find_equilibrium().to_string()
 }
 
-fn parse_input(raw_input: &[String]) -> Map {
+type InputType = Map;
+fn parse_input(raw_input: &[String]) -> InputType {
     let input: Vec<String> = raw_input.iter().map(|x| x.parse().unwrap()).collect();
 
     let mut data_map = Map::new(input[0].len(), input.len());

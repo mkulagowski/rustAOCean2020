@@ -84,11 +84,11 @@ fn check_slope(data: &Map, xslope: usize, yslope: usize) -> usize {
     tree_counter
 }
 
-fn part1(input: &Map) -> String {
+fn part1(input: &InputType) -> String {
     check_slope(input, 3, 1).to_string()
 }
 
-fn part2(input: &Map) -> String {
+fn part2(input: &InputType) -> String {
     [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]
         .iter()
         .map(|&(x, y)| check_slope(input, x, y))
@@ -96,7 +96,8 @@ fn part2(input: &Map) -> String {
         .to_string()
 }
 
-fn parse_input(raw_input: &[String]) -> Map {
+type InputType = Map;
+fn parse_input(raw_input: &[String]) -> InputType {
     let input: Vec<String> = raw_input.iter().map(|x| x.to_string()).collect();
 
     let mut data_map = Map::new(input[0].len(), input.len());
