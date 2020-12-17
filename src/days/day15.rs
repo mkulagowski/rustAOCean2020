@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use crate::common::Solution;
 
 fn find_nth_van_eck(input: &Vec<u32>, limit: usize) -> u32 {
+    //for some reason, creating ::with_capacity() even with correct capacity makes this solution 2x slower...no idea why .__.
     let mut num_to_age: HashMap<u32, usize> = HashMap::new();
     let mut counter = input.len();
     for (i, &x) in input.iter().take(counter - 1).enumerate() {

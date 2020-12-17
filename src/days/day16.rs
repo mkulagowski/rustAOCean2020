@@ -125,8 +125,8 @@ fn part2(input: &InputType) -> String {
         .fields
         .keys()
         .filter(|&x| x.starts_with("departure"))
-        .map(|x| input.my_ticket[*field_mapping.get(x).unwrap()])
-        .product::<u32>()
+        .map(|x| input.my_ticket[*field_mapping.get(x).unwrap()] as u64)
+        .product::<u64>()
         .to_string()
 }
 

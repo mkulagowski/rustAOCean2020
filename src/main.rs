@@ -1,5 +1,6 @@
 mod common;
 mod days;
+mod points;
 
 fn main() {
     for day in days::all_numbers() {
