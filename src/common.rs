@@ -48,12 +48,15 @@ macro_rules! reparse {
     ($txt:expr, $re:expr, $($($args:tt)::*),* ) => {
         {
             let mut err = "" ;
-            let matched = $re.captures($txt).unwrap();
-            let mut matches = matched.iter();
-            matches.next();
-            let result = ($($crate::reparse_one!(err,matches,$($args)::*)),*) ;
-            if err == "" {
-                Ok(result)
+            if let Some(captures) = $re.captures($txt) {
+                let mut matches = captures.iter();
+                matches.next();
+                let result = ($($crate::reparse_one!(err,matches,$($args)::*)),*) ;
+                if err == "" {
+                    Ok(result)
+                } else {
+                    Err(err)
+                }
             } else {
                 Err(err)
             }
