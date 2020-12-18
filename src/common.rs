@@ -77,3 +77,10 @@ macro_rules! reparse {
         }
     };
 }
+
+#[macro_export]
+macro_rules! hashmap {
+    ($( $key: expr => $val: expr ),*) => {{
+         [$(($key, $val)),*].iter().cloned().collect()
+    }}
+}

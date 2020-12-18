@@ -15,6 +15,7 @@ pub mod day14;
 pub mod day15;
 pub mod day16;
 pub mod day17;
+pub mod day18;
 
 pub fn all_numbers() -> Vec<u8> {
     (1..=25).filter(|&day| get_solver(day).is_some()).collect()
@@ -39,6 +40,7 @@ pub fn get_solver(day: u8) -> Option<fn(&[String]) -> crate::common::Solution> {
         15 => Some(day15::solve),
         16 => Some(day16::solve),
         17 => Some(day17::solve),
+        18 => Some(day18::solve),
         _ => None,
     }
 }
