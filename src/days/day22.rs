@@ -103,11 +103,7 @@ fn part2(input: &InputType) -> String {
     let mut game = input.clone();
     let res = game.play_recursive();
 
-    let winner = if res == 1 {
-        &game.player1
-    } else {
-        &game.player2
-    };
+    let winner = if res { &game.player1 } else { &game.player2 };
 
     winner
         .iter()
