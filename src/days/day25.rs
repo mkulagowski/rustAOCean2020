@@ -31,14 +31,14 @@ fn part2(input: &InputType) -> String {
     "".to_string()
 }
 
-struct Pub_Keys {
+struct PubKeys {
     card_pub_key: u64,
     door_pub_key: u64,
 }
 
-type InputType = Pub_Keys;
+type InputType = PubKeys;
 fn parse_input(raw_input: &[String]) -> InputType {
-    Pub_Keys {
+    PubKeys {
         card_pub_key: raw_input[0].parse().unwrap(),
         door_pub_key: raw_input[1].parse().unwrap(),
     }

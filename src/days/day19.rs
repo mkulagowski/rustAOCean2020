@@ -1,5 +1,6 @@
 use crate::common::Solution;
 use std::{collections::HashMap, str::FromStr};
+use regex::Regex;
 
 #[derive(Debug, Clone)]
 enum RuleOp {
@@ -28,105 +29,75 @@ impl FromStr for Rule {
 struct MsgDecoder {
     ruleset: HashMap<u8, RuleOp>,
     msgs: Vec<String>,
-    idx: usize,
 }
 
 impl MsgDecoder {
-    fn cc(&mut self, x: &Rule, inp: &Vec<u8>, ruleset: &HashMap<u8, RuleOp>, idx: usize) -> bool {
-        if self.idx == inp.len() {
-            return false;
-        }
-
+    fn concat_rules(&self, x: &Rule) -> String {
         match x {
             Rule::Value(c) => {
-                let matching = inp[self.idx] == c.as_bytes()[0];
-                if matching {
-                    self.idx += 1;
-                }
-                matching
-            }
+                c.to_string()
+            },
             Rule::Pointers(ptrs) => {
-                let curr_idx = self.idx;
+                let mut res = String::new();
                 for p in ptrs {
-                    if !self.check(inp, *p, ruleset, idx + 1) {
-                        self.idx = curr_idx;
-                        return false;
-                    }
+                    res.push_str(self.get_regex(*p).as_str());
                 }
-                true
+                res
             }
         }
     }
 
-    fn check(
-        &mut self,
-        inp: &Vec<u8>,
-        rule: u8,
-        ruleset: &HashMap<u8, RuleOp>,
-        idx: usize,
-    ) -> bool {
-        if self.idx == inp.len() {
-            return false;
-        }
-        let r = ruleset.get(&rule).unwrap();
+    fn get_regex(&self, rule :u8) -> String {
+        let r = self.ruleset.get(&rule).unwrap();
         let res = match r {
-            RuleOp::Concat(x) => self.cc(x, inp, ruleset, idx),
+            RuleOp::Concat(x) => self.concat_rules(x),
             RuleOp::Or(x, y) => {
-                if self.cc(y, inp, ruleset, idx) {
-                    return true;
-                } else {
-                    return self.cc(x, inp, ruleset, idx);
-                }
+                let mut res = "(".to_string();
+                res.push_str(self.concat_rules(x).as_str());
+                res.push_str("|");
+                res.push_str(self.concat_rules(y).as_str());
+                res.push_str(")");
+                res
             }
         };
         res
     }
-
-    fn lemme_see(&mut self, inp: &Vec<u8>, ruleset: &HashMap<u8, RuleOp>) -> bool {
-        self.idx = 0;
-        let res = self.check(inp, 0, ruleset, 0);
-        res && self.idx == inp.len()
-    }
 }
 
 fn part1(input: &mut InputType) -> String {
-    let rs = input.ruleset.clone();
-    let msgs = input.msgs.clone();
-    msgs.iter()
-        .map(|x| {
-            let res = input.lemme_see(&x.as_bytes().into_iter().map(|y| *y).collect(), &rs);
-            if res {}
-            res
-        })
-        .filter(|x| *x)
+    let mut regstr = "^".to_string();
+    regstr.push_str(input.get_regex(0).as_str());
+    regstr.push('$');
+
+    let reg = Regex::new(regstr.as_str()).unwrap();
+    input.msgs.iter()
+        .filter(|&x| reg.is_match(x))
         .count()
         .to_string()
 }
 
-fn part2(_input: &mut InputType) -> String {
-    // let mut rs = input.ruleset.clone();
-    // rs.insert(
-    //     8,
-    //     RuleOp::Or(Rule::Pointers(vec![42]), Rule::Pointers(vec![42, 8])),
-    // );
-    // rs.insert(
-    //     11,
-    //     RuleOp::Or(
-    //         Rule::Pointers(vec![42, 31]),
-    //         Rule::Pointers(vec![42, 11, 31]),
-    //     ),
-    // );
-    // let msgs = input.msgs.clone();
-    // msgs.iter()
-    //     .map(|x| {
-    //         let res = input.lemme_see(&x.as_bytes().into_iter().map(|y| *y).collect(), &rs);
-    //         if res {}
-    //         res
-    //     })
-    //     .filter(|x| *x)
-    //     .count()
-    //     .to_string()
-    "".to_string()
+fn part2(input: &mut InputType) -> String {
+    let mut curr_idx = 255u8;
+    input.ruleset.insert(curr_idx, RuleOp::Or(Rule::Pointers(vec![42]), Rule::Pointers(vec![42, 42])));
+    input.ruleset.insert(curr_idx - 1, RuleOp::Or(Rule::Pointers(vec![42, 31]), Rule::Pointers(vec![42, 42, 31, 31])));
+    curr_idx -= 2;
+    for _ in 0..2 {
+        input.ruleset.insert(curr_idx, RuleOp::Or(Rule::Pointers(vec![42]), Rule::Pointers(vec![42, curr_idx + 2])));
+        input.ruleset.insert(curr_idx - 1, RuleOp::Or(Rule::Pointers(vec![42, 31]), Rule::Pointers(vec![42, curr_idx + 1, 31])));
+        curr_idx -= 2;
+    }
+    input.ruleset.insert(8, RuleOp::Or(Rule::Pointers(vec![42]), Rule::Pointers(vec![42, curr_idx + 2])));
+    input.ruleset.insert(11, RuleOp::Or(Rule::Pointers(vec![42, 31]), Rule::Pointers(vec![42, curr_idx + 1, 31])));
+
+    let mut regstr = "^".to_string();
+    regstr.push_str(input.get_regex(0).as_str());
+    regstr.push('$');
+    
+    let reg = Regex::new(regstr.as_str()).unwrap();
+    input.msgs.iter()
+        .filter(|&x| reg.is_match(x))
+        .count()
+        .to_string()
 }
 
 type InputType = MsgDecoder;
@@ -162,7 +133,6 @@ fn parse_input(raw_input: &[String]) -> InputType {
     MsgDecoder {
         ruleset,
         msgs,
-        idx: 0,
     }
 }
 
