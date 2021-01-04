@@ -1,15 +1,18 @@
 use crate::{common::Solution, reparse};
 use lazy_static::lazy_static;
 use regex::Regex;
-use std::{collections::{HashMap, HashSet}, fmt};
+use std::{
+    collections::{HashMap, HashSet},
+    fmt,
+};
 
 lazy_static! {
     static ref TITLE_REGX: Regex = Regex::new(r"Tile (\d+):").unwrap();
     static ref SNAKE_ALIGNMENT: [Vec<usize>; 3] = [
-            vec![1, 4, 7, 10, 13, 16],
-            vec![0, 5, 6, 11, 12, 17, 18, 19],
-            vec![18]
-        ];
+        vec![1, 4, 7, 10, 13, 16],
+        vec![0, 5, 6, 11, 12, 17, 18, 19],
+        vec![18]
+    ];
 }
 
 static SNAKE_HEIGHT: usize = 3;
@@ -19,14 +22,14 @@ static SNAKE_LENGTH: usize = 20;
 struct Tile {
     id: u32,
     data: Vec<Vec<bool>>,
-    borders: Vec<u16>
+    borders: Vec<u16>,
 }
 
 impl fmt::Display for Tile {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         for row in &self.data {
             for val in row {
-                write!(f, "{} ", if *val {'#'} else{'.'})?;
+                write!(f, "{} ", if *val { '#' } else { '.' })?;
             }
             writeln!(f, "")?;
         }
@@ -44,8 +47,8 @@ impl Tile {
     }
 
     fn rotr_data(&mut self) {
-        let mut new_data : Vec<Vec<bool>> = vec![vec![false; self.data.len()]; self.data.len()];
-        
+        let mut new_data: Vec<Vec<bool>> = vec![vec![false; self.data.len()]; self.data.len()];
+
         for (iy, row) in self.data.iter().rev().enumerate() {
             for (ix, val) in row.iter().enumerate() {
                 if *val {
@@ -66,7 +69,11 @@ impl Tile {
     }
 
     fn flip_borders(&mut self) {
-        let new_borders = self.borders.drain(..).map(|x| Tile::flip_border(x)).collect();
+        let new_borders = self
+            .borders
+            .drain(..)
+            .map(|x| Tile::flip_border(x))
+            .collect();
         self.borders = new_borders;
         let top = self.top();
         let bottom = self.bottom();
@@ -75,7 +82,7 @@ impl Tile {
     }
 
     fn flip_data(&mut self) {
-        let mut new_data : Vec<Vec<bool>> = vec![vec![false; self.data.len()]; self.data.len()];
+        let mut new_data: Vec<Vec<bool>> = vec![vec![false; self.data.len()]; self.data.len()];
         for (iy, row) in self.data.iter().rev().enumerate() {
             for (ix, val) in row.iter().enumerate() {
                 if *val {
@@ -108,13 +115,15 @@ impl Tile {
     }
 
     fn check_snake(&self, x: usize, y: usize) -> bool {
-        SNAKE_ALIGNMENT.iter()
+        SNAKE_ALIGNMENT
+            .iter()
             .enumerate()
             .all(|(yy, xxs)| xxs.iter().all(|xx| self.data[y - yy][x + xx]))
     }
-    
+
     fn kill_snake(&mut self, x: usize, y: usize) {
-        SNAKE_ALIGNMENT.iter()
+        SNAKE_ALIGNMENT
+            .iter()
             .enumerate()
             .for_each(|(yy, xxs)| xxs.iter().for_each(|xx| self.data[y - yy][x + xx] = false));
     }
@@ -123,8 +132,16 @@ impl Tile {
         let y_max = self.data.len();
         let x_max = self.data[0].len();
 
-        let coords: Vec<(usize, usize)> = (SNAKE_HEIGHT-1..y_max).into_iter().flat_map(|y|
-            (0..x_max-(SNAKE_LENGTH-1)).into_iter().filter(|x| self.check_snake(x.clone(), y)).map(|x| (x, y)).collect::<Vec<(usize, usize)>>()).collect();
+        let coords: Vec<(usize, usize)> = (SNAKE_HEIGHT - 1..y_max)
+            .into_iter()
+            .flat_map(|y| {
+                (0..x_max - (SNAKE_LENGTH - 1))
+                    .into_iter()
+                    .filter(|x| self.check_snake(x.clone(), y))
+                    .map(|x| (x, y))
+                    .collect::<Vec<(usize, usize)>>()
+            })
+            .collect();
 
         if coords.is_empty() {
             false
@@ -147,7 +164,6 @@ impl Tile {
             }
         }
     }
-    
 
     fn flip_border(val: u16) -> u16 {
         val.reverse_bits() >> 6
@@ -160,10 +176,7 @@ fn count_borders(input: &InputType) -> HashMap<u16, HashSet<u32>> {
         t.get_borders()
             .chain(t.get_flipped_borders().iter())
             .for_each(|x| {
-                border_counter
-                    .entry(*x)
-                    .or_default()
-                    .insert(t.id);
+                border_counter.entry(*x).or_default().insert(t.id);
             })
     });
     border_counter
@@ -172,15 +185,10 @@ fn count_borders(input: &InputType) -> HashMap<u16, HashSet<u32>> {
 fn map_neighbours(border_counter: &HashMap<u16, HashSet<u32>>) -> HashMap<u32, HashSet<u32>> {
     let mut neigh_counter: HashMap<u32, HashSet<u32>> = HashMap::new();
     border_counter.iter().for_each(|(_, tiles)| {
-        tiles.iter()
-        .for_each(|&id| {
-            tiles.iter()
-                .filter(|&&i| i != id)
-                .for_each(|&i| {
-                    neigh_counter.entry(id)
-                        .or_default()
-                        .insert(i);
-                })
+        tiles.iter().for_each(|&id| {
+            tiles.iter().filter(|&&i| i != id).for_each(|&i| {
+                neigh_counter.entry(id).or_default().insert(i);
+            })
         })
     });
     neigh_counter
@@ -191,7 +199,7 @@ fn _print_image(image: &Vec<Vec<Tile>>) {
         for y in 0..row[0].data.len() {
             for t in row {
                 for val in &t.data[y] {
-                    print!("{} ", if *val {'#'} else{'.'});
+                    print!("{} ", if *val { '#' } else { '.' });
                 }
                 print!("  ");
             }
@@ -215,12 +223,27 @@ fn align_first_tile(tile: &mut Tile, wall_to_ids: &HashMap<u16, HashSet<u32>>) {
     }
 }
 
-fn match_tile<P>(id: u32, wall: u16, wall_to_ids: &HashMap<u16, HashSet<u32>>, tiles_left: &mut Vec<Tile>, mut map_to_wall: P) -> Tile
+fn match_tile<P>(
+    id: u32,
+    wall: u16,
+    wall_to_ids: &HashMap<u16, HashSet<u32>>,
+    tiles_left: &mut Vec<Tile>,
+    mut map_to_wall: P,
+) -> Tile
 where
-    P:FnMut(&Tile) -> u16    
+    P: FnMut(&Tile) -> u16,
 {
-    let tile_id = wall_to_ids.get(&wall).unwrap().iter().find(|&x| x != &id).unwrap();
-    let (idx, _) = tiles_left.iter().enumerate().find(|(_, x)| &x.id == tile_id).unwrap();
+    let tile_id = wall_to_ids
+        .get(&wall)
+        .unwrap()
+        .iter()
+        .find(|&x| x != &id)
+        .unwrap();
+    let (idx, _) = tiles_left
+        .iter()
+        .enumerate()
+        .find(|(_, x)| &x.id == tile_id)
+        .unwrap();
     let mut next = tiles_left.remove(idx);
     if next.get_borders().all(|&x| x != wall) {
         next.flip();
@@ -234,10 +257,11 @@ where
 fn merge_tiles(tiles: Vec<Vec<Tile>>) -> Tile {
     let mut data: Vec<Vec<bool>> = Vec::new();
     for row in tiles {
-        for y in 1..row[0].data.len()-1 {
+        for y in 1..row[0].data.len() - 1 {
             let mut new_row = Vec::new();
             for t in &row {
-                let trimmed_row: Vec<&bool> = t.data[y].iter().skip(1).take(t.data[0].len() - 2).collect();
+                let trimmed_row: Vec<&bool> =
+                    t.data[y].iter().skip(1).take(t.data[0].len() - 2).collect();
                 for val in trimmed_row {
                     new_row.push(*val);
                 }
@@ -245,12 +269,17 @@ fn merge_tiles(tiles: Vec<Vec<Tile>>) -> Tile {
             data.push(new_row);
         }
     }
-    Tile { id: 0, data, borders: Vec::new() }
+    Tile {
+        id: 0,
+        data,
+        borders: Vec::new(),
+    }
 }
 
 fn part1(input: &InputType) -> String {
     let wall_to_ids = count_borders(input);
-    map_neighbours(&wall_to_ids).iter()
+    map_neighbours(&wall_to_ids)
+        .iter()
         .filter(|(_, neighs)| neighs.len() == 2)
         .map(|(&id, _)| id as u64)
         .product::<u64>()
@@ -260,11 +289,17 @@ fn part1(input: &InputType) -> String {
 fn part2(input: &InputType) -> String {
     let wall_to_ids = count_borders(input);
     let tile_to_ids = map_neighbours(&wall_to_ids);
-    let mut corner = input.iter()
+    let mut corner = input
+        .iter()
         .find(|x| tile_to_ids.get(&x.id).unwrap().len() == 2)
-        .unwrap().clone();
+        .unwrap()
+        .clone();
 
-    let mut tiles_left: Vec<Tile> = input.into_iter().cloned().filter(|x| x.id != corner.id).collect();
+    let mut tiles_left: Vec<Tile> = input
+        .into_iter()
+        .cloned()
+        .filter(|x| x.id != corner.id)
+        .collect();
     align_first_tile(&mut corner, &wall_to_ids);
 
     let mut image: Vec<Vec<Tile>> = vec![vec![corner.to_owned()]];
@@ -276,7 +311,9 @@ fn part2(input: &InputType) -> String {
         curr_id = curr_tile.id;
         curr_wall = Tile::flip_border(curr_tile.right());
         while wall_to_ids.get(&curr_wall).unwrap().len() > 1 {
-            let next = match_tile(curr_id, curr_wall, &wall_to_ids, &mut tiles_left, |x| x.left());
+            let next = match_tile(curr_id, curr_wall, &wall_to_ids, &mut tiles_left, |x| {
+                x.left()
+            });
             curr_id = next.id;
             curr_wall = Tile::flip_border(next.right());
             image.last_mut().unwrap().push(next);
@@ -289,13 +326,17 @@ fn part2(input: &InputType) -> String {
         let curr_tile = image.last().unwrap().first().unwrap();
         curr_id = curr_tile.id;
         curr_wall = Tile::flip_border(curr_tile.bottom());
-        let next = match_tile(curr_id, curr_wall, &wall_to_ids, &mut tiles_left, |x| x.top());
+        let next = match_tile(curr_id, curr_wall, &wall_to_ids, &mut tiles_left, |x| {
+            x.top()
+        });
         image.push(vec![next]);
     }
 
     let mut merged_image = merge_tiles(image);
     merged_image.obliterate_all_snakes();
-    merged_image.data.into_iter()
+    merged_image
+        .data
+        .into_iter()
         .flatten()
         .filter(|x| *x)
         .count()
@@ -321,22 +362,21 @@ fn parse_input(raw_input: &[String]) -> InputType {
             unparsed_borders.push(data[9].iter().rev().cloned().collect());
             unparsed_borders.push(data.iter().rev().map(|x| x[0]).collect());
 
-            let borders=
-                unparsed_borders
-                    .iter()
-                    .map(|x| {
-                        let mut res = 0u16;
-                        for i in x.iter() {
-                            res <<= 1;
-                            if *i {
-                                res |= 1;
-                            }
+            let borders = unparsed_borders
+                .iter()
+                .map(|x| {
+                    let mut res = 0u16;
+                    for i in x.iter() {
+                        res <<= 1;
+                        if *i {
+                            res |= 1;
                         }
-                        res
-                    })
-                    .collect();
+                    }
+                    res
+                })
+                .collect();
 
-            tiles.push(Tile{ id, data, borders });
+            tiles.push(Tile { id, data, borders });
         }
     }
     tiles
