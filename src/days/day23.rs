@@ -1,113 +1,72 @@
 use crate::common::Solution;
+use itertools::iterate;
 
-fn dec(num: u32, minn: u32, maxx: u32) -> u32 {
-    if num == minn {
-        return maxx;
-    }
-    num - 1
+fn create_next_list_small(input: &InputType) -> [usize; 10] {
+    let mut next: [usize; 10] = [0; 10];
+    input
+        .windows(2)
+        .for_each(|w| next[w[0] as usize] = w[1] as usize);
+    next[0] = *input.first().unwrap() as usize;
+    next[*input.last().unwrap() as usize] = next[0];
+    next
 }
-fn inc(num: usize) -> usize {
-    if num == 8 {
-        return 0;
+
+unsafe fn fill_next_list_big(input: &InputType) {
+    input
+        .windows(2)
+        .for_each(|w| BIG_LIST[w[0] as usize] = w[1] as usize);
+    BIG_LIST[0] = *input.first().unwrap() as usize;
+
+    let mut pp = *input.last().unwrap() as usize;
+    let mut nn = input.len() + 1;
+    while pp < BIG_LIST.len() - 1 {
+        BIG_LIST[pp] = nn;
+        pp = nn;
+        nn += 1;
     }
-    num + 1
+    BIG_LIST[pp] = BIG_LIST[0];
+}
+
+fn do_da_crab(next: &mut [usize], moves_no: usize) {
+    let mut c = 0;
+    for _ in 0..moves_no {
+        c = next[c];
+        let p1 = next[c];
+        let p2 = next[p1];
+        let p3 = next[p2];
+        let mut dst = c - 1;
+        while dst == p1 || dst == p2 || dst == p3 || dst == 0 {
+            if dst == 0 {
+                dst = next.len() - 1;
+            } else {
+                dst -= 1;
+            }
+        }
+        next[c] = next[p3];
+        next[p3] = next[dst];
+        next[dst] = p1;
+    }
 }
 
 fn part1(input: &InputType) -> String {
-    let mut input = input.clone();
-    let mut curr_cup = 0;
-    for _ in 0..100 {
-        let curr_val = input[curr_cup];
-        let mut dest_val = dec(curr_val, 1, 9);
-        if curr_cup >= 5 {
-            input.rotate_left(curr_cup);
-            curr_cup = 0;
-        }
-        let mut vals: Vec<u32> = input.drain(curr_cup + 1..curr_cup + 4).collect();
-        while vals.contains(&dest_val) {
-            dest_val = dec(dest_val, 1, 9);
-        }
-        let dest_cup = input
-            .iter()
-            .enumerate()
-            .find(|&(_, x)| x == &dest_val)
-            .map(|(i, _)| i)
-            .unwrap();
+    let mut next = create_next_list_small(&input);
+    do_da_crab(&mut next, 100);
 
-        let mut rest = input.split_off(dest_cup + 1);
-        input.append(&mut vals);
-        input.append(&mut rest);
-
-        if dest_cup < curr_cup {
-            curr_cup += 3;
-        }
-        curr_cup = inc(curr_cup);
-    }
-
-    let last_cup = input
-        .iter()
-        .enumerate()
-        .find(|&(_, x)| x == &1)
-        .map(|(i, _)| i)
-        .unwrap();
-    input.rotate_left(last_cup);
-    input
-        .iter()
-        .skip(1)
+    iterate(next[1], |&c| next[c])
+        .take_while(|&c| c != 1)
         .flat_map(|x| x.to_string().chars().collect::<Vec<char>>())
         .collect::<String>()
 }
 
-fn part2(_input: &InputType) -> String {
-    // let mut input = input.clone();
-    // let mut new_nums = (10..=1_000_000).into_iter().collect();
-    // input.append(&mut new_nums);
-    // let mut curr_cup = 0;
-    // for _ in 0..10_000_000 {
-    //     let curr_val = input[curr_cup];
-    //     let mut dest_val = dec(curr_val, 1, 1_000_000);
+// remade solution so it uses static array, otherwise it would just overlow stack on my laptop
+static mut BIG_LIST: [usize; 1_000_001] = [0; 1_000_001];
 
-    //     if curr_cup >= 5 {
-    //         input.rotate_left(curr_cup);
-    //         curr_cup = 0;
-    //     }
-    //     let mut vals: Vec<u32> = input.drain(curr_cup + 1..curr_cup + 4).collect();
-
-    //     while vals.contains(&dest_val) {
-    //         dest_val = dec(dest_val, 1, 1_000_000);
-    //     }
-    //     let dest_cup = input
-    //         .iter()
-    //         .enumerate()
-    //         .find(|&(_, x)| x == &dest_val)
-    //         .map(|(i, _)| i)
-    //         .unwrap();
-
-    //     let mut rest = input.split_off(dest_cup + 1);
-    //     input.append(&mut vals);
-    //     input.append(&mut rest);
-
-    //     if dest_cup < curr_cup {
-    //         curr_cup += 3;
-    //     }
-    //     curr_cup = inc(curr_cup);
-    // }
-
-    // let last_cup = input
-    //     .iter()
-    //     .enumerate()
-    //     .find(|&(_, x)| x == &1)
-    //     .map(|(i, _)| i)
-    //     .unwrap();
-    // input.rotate_left(last_cup);
-    // input
-    //     .iter()
-    //     .skip(1)
-    //     .take(2)
-    //     .map(|x| *x as u64)
-    //     .product::<u64>()
-    //     .to_string()
-    "".to_string()
+fn part2(input: &InputType) -> String {
+    unsafe {
+        fill_next_list_big(&input);
+        do_da_crab(&mut BIG_LIST, 10_000_000);
+        (BIG_LIST[1] * BIG_LIST[BIG_LIST[1]]).to_string()
+    }
 }
 
 type InputType = Vec<u32>;
