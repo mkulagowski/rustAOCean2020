@@ -27,7 +27,7 @@ fn part1(input: &InputType) -> String {
     enc_key_card.to_string()
 }
 
-fn part2(input: &InputType) -> String {
+fn part2(_input: &InputType) -> String {
     "".to_string()
 }
 

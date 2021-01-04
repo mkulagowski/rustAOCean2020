@@ -34,9 +34,7 @@ struct MsgDecoder {
 impl MsgDecoder {
     fn concat_rules(&self, x: &Rule) -> String {
         match x {
-            Rule::Value(c) => {
-                c.to_string()
-            },
+            Rule::Value(c) => c.to_string(),
             Rule::Pointers(ptrs) => {
                 let mut res = String::new();
                 for p in ptrs {
@@ -48,28 +46,17 @@ impl MsgDecoder {
     }
 
     fn get_regex(&self, rule :u8) -> String {
-        let r = self.ruleset.get(&rule).unwrap();
-        let res = match r {
+        match self.ruleset.get(&rule).unwrap() {
             RuleOp::Concat(x) => self.concat_rules(x),
-            RuleOp::Or(x, y) => {
-                let mut res = "(".to_string();
-                res.push_str(self.concat_rules(x).as_str());
-                res.push_str("|");
-                res.push_str(self.concat_rules(y).as_str());
-                res.push_str(")");
-                res
-            }
-        };
-        res
+            RuleOp::Or(x, y) => format!("(?:{}|{})", self.concat_rules(x), self.concat_rules(y))
+        }
     }
 }
 
 fn part1(input: &mut InputType) -> String {
-    let mut regstr = "^".to_string();
-    regstr.push_str(input.get_regex(0).as_str());
-    regstr.push('$');
-
+    let regstr = format!("^{}$", input.get_regex(0));
     let reg = Regex::new(regstr.as_str()).unwrap();
+
     input.msgs.iter()
         .filter(|&x| reg.is_match(x))
         .count()
@@ -89,10 +76,7 @@ fn part2(input: &mut InputType) -> String {
     input.ruleset.insert(8, RuleOp::Or(Rule::Pointers(vec![42]), Rule::Pointers(vec![42, curr_idx + 2])));
     input.ruleset.insert(11, RuleOp::Or(Rule::Pointers(vec![42, 31]), Rule::Pointers(vec![42, curr_idx + 1, 31])));
 
-    let mut regstr = "^".to_string();
-    regstr.push_str(input.get_regex(0).as_str());
-    regstr.push('$');
-    
+    let regstr = format!("^{}$", input.get_regex(0));
     let reg = Regex::new(regstr.as_str()).unwrap();
     input.msgs.iter()
         .filter(|&x| reg.is_match(x))

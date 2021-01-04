@@ -58,7 +58,7 @@ fn part1(input: &InputType) -> String {
         .collect::<String>()
 }
 
-// remade solution so it uses static array, otherwise it would just overlow stack on my laptop
+// remade solution so it uses static array, otherwise it would just overflow stack on my laptop
 static mut BIG_LIST: [usize; 1_000_001] = [0; 1_000_001];
 
 fn part2(input: &InputType) -> String {

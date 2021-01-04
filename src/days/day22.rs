@@ -19,6 +19,7 @@ impl Combat {
             seen_states: HashSet::new(),
         }
     }
+    
     fn is_finished(&self) -> bool {
         self.player1.is_empty() || self.player2.is_empty()
     }
